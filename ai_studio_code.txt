@@ -1,0 +1,326 @@
+import React, { useState, useEffect } from "react";
+import { 
+  ChevronRight, 
+  Phone, 
+  Instagram, 
+  MapPin, 
+  Clock, 
+  ShieldCheck, 
+  Activity, 
+  Star, 
+  Menu, 
+  X, 
+  ArrowRight,
+  CheckCircle2,
+  MessageSquare,
+  Calendar,
+  UserCheck
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+// Утилита для удобной работы с Tailwind классами
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// Данные о заболеваниях
+const diseases = [
+  {
+    id: "scoliosis",
+    title: "Сколиоз",
+    description: "Искривление позвоночника, которое без коррекции приводит к деформации грудной клетки и нарушению работы внутренних органов.",
+    symptoms: ["Асимметрия плеч", "Боли в спине при ходьбе", "Быстрая утомляемость", "Нарушение осанки"],
+    approach: "Мягкая мануальная правка для выравнивания оси позвоночника и снятия мышечного перенапряжения."
+  },
+  {
+    id: "hernia",
+    title: "Грыжа диска",
+    description: "Выпячивание межпозвонкового диска, сдавливающее нервные корешки. Часто является следствием запущенных смещений.",
+    symptoms: ["Острая простреливающая боль", "Онемение конечностей", "Слабость в ногах/руках", "Ограничение подвижности"],
+    approach: "Декомпрессия пораженного сегмента и восстановление правильного положения позвонков для снятия давления с нерва."
+  },
+  {
+    id: "osteochondrosis",
+    title: "Остеохондроз",
+    description: "Дегенеративное изменение тканей позвоночника. Мы работаем с причиной — неправильным распределением нагрузки.",
+    symptoms: ["Ноющие боли в спине", "Хруст при движениях", "Головные боли", "Скованность по утрам"],
+    approach: "Восстановление подвижности суставов позвоночника и улучшение кровоснабжения тканей."
+  },
+  {
+    id: "subluxation",
+    title: "Подвывих",
+    description: "Смещение позвонка, которое нарушает работу всей нервной системы. Основа большинства проблем со спиной.",
+    symptoms: ["Локальная острая боль", "Головокружение (при шейном подвывихе)", "Скованность движений", "Онемение"],
+    approach: "Точечная правка для возвращения позвонка в его физиологическое ложе и восстановления нормальной иннервации."
+  }
+];
+
+// Компонент визуализации позвоночника
+function SpineVisualization() {
+  return (
+    <div className="flex flex-col items-center justify-center bg-white rounded-3xl p-6 border border-slate-200 shadow-xl overflow-hidden h-full min-h-[500px] relative group">
+      <div className="absolute inset-0 bg-gradient-to-b from-blue-50/30 to-transparent pointer-events-none" />
+      <div className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-6 relative z-10">Анатомическая модель</div>
+      <div className="relative flex-grow flex items-center justify-center w-full">
+        <img 
+          src="/input_file_0.png" 
+          alt="Анатомия позвоночника" 
+          className="h-full max-h-[450px] w-auto object-contain transition-transform duration-1000 group-hover:scale-110"
+        />
+      </div>
+      <div className="mt-6 text-center relative z-10">
+        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+          Детальная визуализация <br /> костных структур
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [activeDisease, setActiveDisease] = useState(diseases[0]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900">
+      {/* Навигация */}
+      <nav className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b",
+        scrolled ? "bg-white/80 backdrop-blur-xl py-4 border-slate-200 shadow-sm" : "bg-transparent py-6 border-transparent"
+      )}>
+        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-medical-blue rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+              <Activity className="text-white w-6 h-6" />
+            </div>
+            <div>
+              <span className="text-xl font-black tracking-tighter text-medical-blue block leading-none">СТАРК</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Костоправ</span>
+            </div>
+          </div>
+
+          <div className="hidden md:flex items-center gap-10">
+            {["Методика", "Заболевания", "Отзывы", "Контакты"].map((item) => (
+              <a 
+                key={item} 
+                href={`#${item.toLowerCase()}`} 
+                className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-medical-blue transition-colors"
+              >
+                {item}
+              </a>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-6">
+            <a href="tel:+79000000000" className="hidden sm:flex items-center gap-3 group">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                <Phone className="w-4 h-4 text-medical-blue" />
+              </div>
+              <span className="text-sm font-bold text-slate-700">+7 (900) 000-00-00</span>
+            </a>
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 text-slate-600"
+            >
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Главный экран (Hero) */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-12 gap-16 items-center">
+          <div className="lg:col-span-7 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-600 text-[10px] font-black uppercase tracking-widest mb-8">
+                <ShieldCheck className="w-3 h-3" /> Безопасная коррекция позвоночника
+              </div>
+              
+              <h1 className="text-5xl lg:text-7xl font-black text-medical-blue leading-[0.9] mb-8 uppercase tracking-tighter font-display">
+                Верните <br /> 
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">свободу</span> <br />
+                движения
+              </h1>
+              
+              <p className="text-lg text-slate-600 mb-12 max-w-xl leading-relaxed font-medium">
+                Авторская методика ручной коррекции, направленная на устранение первопричины болей, а не просто снятие симптомов.
+              </p>
+
+              <div className="flex flex-wrap gap-6">
+                <a 
+                  href="#booking" 
+                  className="px-10 py-5 bg-medical-blue text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all hover:-translate-y-1 flex items-center gap-3"
+                >
+                  Записаться на прием <ArrowRight className="w-4 h-4" />
+                </a>
+                <div className="flex items-center gap-5 px-8 py-5 border border-slate-200 rounded-lg bg-white/50 backdrop-blur-sm">
+                  <div className="text-3xl font-black text-medical-blue mono">5+</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-tight">
+                    Лет успешной <br /> практики
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+          
+          <div className="lg:col-span-5 relative">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative aspect-[4/5] rounded-3xl overflow-hidden border-8 border-white shadow-2xl bg-gradient-to-b from-slate-50 to-slate-200 group"
+            >
+              <img 
+                src="/input_file_1.png" 
+                alt="Старк - Костоправ" 
+                className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-medical-blue/80 via-transparent to-transparent opacity-40" />
+              <div className="absolute bottom-8 left-8 right-8 p-8 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                <div className="text-white font-black text-xl uppercase tracking-tighter mb-1">СТАРК</div>
+                <div className="text-white/80 text-xs uppercase tracking-[0.2em] font-bold">Мастер мануальной коррекции</div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Раздел заболеваний */}
+      <section id="заболевания" className="py-32 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-24">
+            <h2 className="text-3xl md:text-5xl font-black text-medical-blue mb-6 uppercase tracking-tight font-display">
+              С чем мы работаем
+            </h2>
+            <div className="w-24 h-1.5 bg-blue-600 mx-auto rounded-full" />
+          </div>
+
+          <div className="grid xl:grid-cols-12 gap-12">
+            <div className="xl:col-span-3 space-y-3">
+              {diseases.map((disease) => (
+                <button
+                  key={disease.id}
+                  onClick={() => setActiveDisease(disease)}
+                  className={`w-full p-6 rounded-2xl text-left transition-all flex items-center justify-between group border-2 ${
+                    activeDisease.id === disease.id 
+                    ? "bg-blue-50 border-blue-500 text-blue-900 shadow-lg shadow-blue-100" 
+                    : "bg-white border-slate-200 text-slate-600 hover:border-blue-300"
+                  }`}
+                >
+                  <span className="font-bold uppercase tracking-tight text-sm md:text-base leading-tight">{disease.title}</span>
+                  <ChevronRight className={`w-3 h-3 transition-transform ${activeDisease.id === disease.id ? "rotate-90" : "group-hover:translate-x-1"}`} />
+                </button>
+              ))}
+            </div>
+
+            <div className="xl:col-span-4">
+              <div className="h-full">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeDisease.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="bg-white p-8 rounded-3xl border border-slate-200 shadow-2xl relative overflow-hidden h-full"
+                  >
+                    <h3 className="text-xl md:text-2xl font-black text-medical-blue mb-6 uppercase tracking-tight font-display leading-tight">
+                      {activeDisease.title}
+                    </h3>
+                    
+                    <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-8 pb-8 border-b border-slate-100">
+                      {activeDisease.description}
+                    </p>
+
+                    <div className="space-y-10">
+                      <div>
+                        <div className="text-blue-600 font-black uppercase tracking-widest text-xs mb-5 flex items-center gap-3">
+                          <Activity className="w-4 h-4" /> Основные симптомы
+                        </div>
+                        <ul className="grid grid-cols-1 gap-4">
+                          {activeDisease.symptoms.map((symptom, i) => (
+                            <li key={i} className="flex items-center gap-3 text-slate-800 font-bold text-sm uppercase tracking-tight">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                              {symptom}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <div className="text-blue-600 font-black uppercase tracking-widest text-xs mb-5 flex items-center gap-3">
+                          <ShieldCheck className="w-4 h-4" /> Метод коррекции
+                        </div>
+                        <p className="text-slate-700 text-sm md:text-base leading-relaxed font-medium bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                          {activeDisease.approach}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+            
+            <div className="xl:col-span-5">
+              <SpineVisualization />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Футер */}
+      <footer id="контакты" className="bg-medical-blue text-white py-20">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-16">
+          <div>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
+                <Activity className="text-medical-blue w-6 h-6" />
+              </div>
+              <span className="text-2xl font-black tracking-tighter uppercase">СТАРК</span>
+            </div>
+            <p className="text-blue-200/60 text-sm leading-relaxed font-medium">
+              Профессиональная помощь в восстановлении здоровья позвоночника и суставов.
+            </p>
+          </div>
+          
+          <div className="space-y-6">
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-blue-400">Контакты</h4>
+            <div className="space-y-4">
+              <a href="tel:+79000000000" className="flex items-center gap-4 text-lg font-bold hover:text-blue-300 transition-colors">
+                <Phone className="w-5 h-5 text-blue-400" /> +7 (900) 000-00-00
+              </a>
+              <div className="flex items-center gap-4 text-blue-100/80 font-medium">
+                <MapPin className="w-5 h-5 text-blue-400" /> г. Москва, ул. Примерная, 10
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-blue-400">Соцсети</h4>
+            <div className="flex gap-4">
+              <a href="#" className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                <Instagram className="w-6 h-6" />
+              </a>
+              <a href="#" className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                <MessageSquare className="w-6 h-6" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
